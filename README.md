@@ -6,9 +6,7 @@ This repository contains the code for a research project aiming to enhance our u
 
 - [Background](#background)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 - [Acknowledgements](#acknowledgements)
 
 ## Background
