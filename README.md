@@ -5,7 +5,6 @@ This repository contains the code for a research project aiming to enhance our u
 ## Table of Contents
 
 - [Background](#background)
-- [Installation](#installation)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
 
