@@ -5,6 +5,7 @@ This repository contains the code for a research project aiming to enhance our u
 ## Table of Contents
 
 - [Background](#background)
+- [Setup](#setup)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
 
@@ -14,6 +15,25 @@ Recent observations of black holes in the center of the SgrA* and M87 galaxies b
 
 This project introduces an alternative approach, using machine learning and more specifically, Physics Informed Neural Networks (PINNs). This novel methodology seeks to reduce computational costs while generating robust and accurate predictions.
 
+## Setup 
+
+We recommend creating a virual environment when running this project. You can create a virtual environment in the root directory of this project by execuitng:
+```
+python3 -m venv .
+```
+which you can then activate with:
+
+```
+source bin/activate
+```
+
+You can always deactivate the `venv` by executing the `deactivate` command in the terminal.
+
+This  package uses `Pytorch`. You can install all dependencies by running:
+
+```
+pip install -r requirements.txt
+```
 ## Contributing
 
 If you'd like to contribute to this project, please fork the repository and submit a pull request.
