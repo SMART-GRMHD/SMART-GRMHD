@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+pyvenv.cfg
+lib/
+bin/
+include/
+.ipynb_checkpoints/
+share/
+
+# macOS
+.DS_Store
+
+# Virtual Environment
+venv/
+
+# VS Code
+.vscode/
