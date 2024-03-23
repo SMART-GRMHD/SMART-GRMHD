@@ -9,6 +9,8 @@ include/
 .ipynb_checkpoints/
 share/
 
+Scripts
+
 # macOS
 .DS_Store
 
