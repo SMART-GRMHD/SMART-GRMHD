@@ -9,6 +9,8 @@ class TrainableTanh(nn.Module):
     def forward(self, x):
         return torch.tanh(self.beta * x)
 
+_modv = lambda a,b : 2/torch.pi*(torch.arctan(torch.sqrt(a**2+b**2))/torch.sqrt(a**2+b**2))
+
 class FinalActivation(nn.Module):
     def __init__(self):
         super(FinalActivation, self).__init__()
