@@ -4,7 +4,7 @@ import numpy as np
 # model parameter
 Gamma = 5 / 3
 B_x = 5
-B_z = 0.7
+B_z = 0.0#Should be 0.7
 v_z = 0
 
 
@@ -72,7 +72,7 @@ def energy(D, h, gamma, B, v, p):
     )
 
 
-def conserved(P, Gamma, B_x, B_z):
+def conserved(P):
     rho, v_x, v_y, B_y, p = P.t().squeeze()
     v = torch.tensor([v_x, v_y, v_z])
     B = torch.tensor([B_x, B_y, B_z])
@@ -92,7 +92,7 @@ def conserved(P, Gamma, B_x, B_z):
     return torch.stack([D_var, *m, B_y, E_var]).t()
 
 
-def current(P, Gamma, B_x, B_z):
+def current(P):
     rho, v_x, v_y, B_y, p = P.t().squeeze()
     v = torch.tensor([v_x, v_y, v_z])
     B = torch.tensor([B_x, B_y, B_z])
@@ -103,7 +103,7 @@ def current(P, Gamma, B_x, B_z):
 
     V_times_B = v_x * B_x + v_y * B_y
 
-    beta_squared = torch.sum(B**2) / gamma_var**2 + V_times_B**2
+    beta_squared = torch.sum(B ** 2) / gamma_var ** 2 + V_times_B ** 2
 
     p_t = p + (beta_squared) / 2
 
@@ -117,25 +117,21 @@ def current(P, Gamma, B_x, B_z):
 
     p_t = p + beta_squared / 2
 
-    b_x = B_x / gamma_var + gamma_var * v_x * torch.dot(v, B)
+    b_x = B_x / gamma_var + gamma_var * v_x * torch.dot(v,B)
 
-    b_y = B_y / gamma_var + gamma_var * v_y * torch.dot(v, B)
+    b_y = B_y / gamma_var + gamma_var * v_y * torch.dot(v,B)
 
     b_z = 0
-
-    J_x = (
-        D_var * v_x,
-        w_t * gamma_var * v_x**2 - b_x**2 + p_t,
-        w_t * gamma_var * v_x * v_y - b_x * b_y,
-        v_y * B_x - v_x * B_y,
-        m_x,
-    )
+    
+    J_x = (D_var * v_x, w_t * gamma_var * v_x**2 - b_x**2 + p_t, 
+    w_t * gamma_var * v_x * v_y - b_x * b_y, 
+    v_y * B_x - v_x * B_y, m_x)
 
     return J_x
 
 
 def conserved_alfredo(P):
-    t_P = P.t().squeeze()  # .to(device)
+    t_P = P.t().squeeze()#.to(device)
     rho = t_P[0]
     v_x = t_P[1]
     v_y = t_P[2]
@@ -144,24 +140,24 @@ def conserved_alfredo(P):
     # Bz = t_P[5]
     p = t_P[4]
 
-    B2 = B_x**2 + B_y**2 + B_z**2
-    v2 = v_x**2 + v_y**2 + v_z**2
-    vB = v_x * B_x + v_y * B_y + v_z * B_z
+    B2=B_x**2+B_y**2+B_z**2
+    v2=v_x**2+v_y**2+v_z**2
+    vB= v_x*B_x + v_y*B_y+ v_z*B_z
 
-    hh = 1 + p * Gamma / (rho * (Gamma - 1))
-    gg = (1 - v2) ** (-0.5)
-    DD = rho * gg
+    hh= 1 + p*Gamma/(rho*(Gamma-1)) 
+    gg=(1-v2)**(-0.5)
+    DD=rho*gg
 
-    mx = (DD * hh * gg + B2) * v_x - vB * B_x
-    my = (DD * hh * gg + B2) * v_y - vB * B_y
 
-    EE = DD * hh * gg - p + B2 / 2 + (v2 * B2 - vB**2) / 2
+    mx= (DD*hh*gg + B2)*v_x - vB*B_x
+    my= (DD*hh*gg + B2)*v_y - vB*B_y
+    
+    EE= DD*hh*gg - p + B2/2 + (v2*B2 - vB**2)/2
 
     return torch.stack([DD, mx, my, B_y, EE]).t()
 
-
 def currents_alfredo(P):
-    t_P = P.t().squeeze()  # .to(device)
+    t_P = P.t().squeeze()#.to(device)
     rho = t_P[0]
     v_x = t_P[1]
     v_y = t_P[2]
@@ -170,32 +166,28 @@ def currents_alfredo(P):
     # Bz = t_P[5]
     p = t_P[4]
 
-    B2 = B_x**2 + B_y**2 + B_z**2
-    v2 = v_x**2 + v_y**2 + v_z**2
-    vB = v_x * B_x + v_y * B_y + v_z * B_z
+    B2=B_x**2+B_y**2+B_z**2
+    v2=v_x**2+v_y**2+v_z**2
+    vB= v_x*B_x + v_y*B_y+ v_z*B_z
 
-    hh = 1 + p * Gamma / (rho * (Gamma - 1))
-    gg = (1 - v2) ** (-0.5)
-    DD = rho * gg
+    hh= 1 + p*Gamma/(rho*(Gamma-1)) 
+    gg=(1-v2)**(-0.5)
+    DD=rho*gg
 
-    beta2 = B2 / (gg * gg) + vB**2
+    beta2=B2/(gg*gg)+ vB**2
 
-    wtt = rho * hh + p - beta2
-    bx = B_x / gg + gg * v_x * vB
-    by = B_y / gg + gg * v_y * vB
-    pt = p + beta2 / 2
+    wtt=rho*hh + p - beta2
+    bx= B_x/gg + gg*v_x*vB
+    by= B_y/gg + gg*v_y*vB
+    pt=p+ beta2/2
 
-    mx = (DD * hh * gg + B2) * v_x - vB * B_x
-    my = (DD * hh * gg + B2) * v_y - vB * B_y
+    mx= (DD*hh*gg + B2)*v_x - vB*B_x
+    my= (DD*hh*gg + B2)*v_y - vB*B_y
+    
+    EE= DD*hh*gg - p + B2/2 + (v2*B2 - vB**2)/2
 
-    EE = DD * hh * gg - p + B2 / 2 + (v2 * B2 - vB**2) / 2
-
-    return torch.stack(
-        [
-            DD * v_x,
-            wtt * gg * (v_x**2) - bx**2 + pt,
-            wtt * gg * (v_x * v_y) - bx * by,
-            v_y * B_x - v_x * B_y,
-            mx,
-        ]
-    ).t()
+    return torch.stack([DD*v_x, 
+        wtt*gg*(v_x**2)-bx**2 + pt,
+        wtt*gg*(v_x*v_y)-bx*by,
+        v_y*B_x - v_x*B_y,
+        mx]).t()
