@@ -35,10 +35,10 @@ class FinalActivation(nn.Module):
     def forward(self, unconstrained_primitives):
         # Ensure input tensor is in the right shape and the number of functions matches the number of elements in the tensor
 
-        if unconstrained_primitives[1] != 7:
-            print(unconstrained_primitives.numel())
-            print(unconstrained_primitives.shape)
-            raise ValueError("The number of functions must match the number of elements in the tensor {}".format(unconstrained_primitives.numel()))
+        #if unconstrained_primitives[1] != 7:
+        #    print(unconstrained_primitives.numel())
+        #    print(unconstrained_primitives.shape)
+        #    raise ValueError("The number of functions must match the number of elements in the tensor {}".format(unconstrained_primitives.numel()))
 
         # Apply each function to its corresponding element
         #output = torch.empty_like(unconstrained_primitives)
