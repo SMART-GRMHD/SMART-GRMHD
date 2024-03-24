@@ -69,70 +69,7 @@ def energy(D, h, gamma, B, v, p):
         + 0.5 * (kinetic_energy_term * magnetic_energy_term - torch.dot(v, B) ** 2)
     )
 
-
-def conserved(P, Gamma, B_x, B_z):
-    rho, v_x, v_y, B_y, p = P.t().squeeze()
-    v = torch.tensor([v_x, v_y, v_z])
-    B = torch.tensor([B_x, B_y, B_z])
-
-    gamma_var = gamma(v)
-    h_var = h(Gamma, p, rho)
-    D_var = D(rho, gamma_var)
-    m = momentum(D_var, h_var, gamma_var, B, v)
-    E_var = energy(D_var, h_var, gamma_var, B, v, p)
-
-    # # Ensure all components are tensors
-    D_var = torch.tensor(D_var) if not isinstance(D_var, torch.Tensor) else D_var
-    B_y = torch.tensor(B_y) if not isinstance(B_y, torch.Tensor) else B_y
-    B_z = torch.tensor(B_z) if not isinstance(B_z, torch.Tensor) else B_z
-    E_var = torch.tensor(E_var) if not isinstance(E_var, torch.Tensor) else E_var
-
-    return torch.stack([D_var, *m, B_y, E_var]).t()
-
-
-def current(P, Gamma, B_x, B_z):
-    rho, v_x, v_y, B_y, p = P.t().squeeze()
-    v = torch.tensor([v_x, v_y, v_z])
-    B = torch.tensor([B_x, B_y, B_z])
-
-    gamma_var = gamma(v)
-
-    D_var = D(rho, gamma_var)
-
-    V_times_B = v_x * B_x + v_y * B_y + v_z * B_z
-
-    beta_squared = torch.sum(B**2) / gamma_var**2 + V_times_B**2
-
-    p_t = p + (beta_squared) / 2
-
-    B_squared = B_x**2 + B_y**2 + B_z**2
-
-    V_squared = v_x**2 + v_y**2 + v_z**2
-
-    h_var = h(Gamma, p, rho)
-
-    w_t = rho * h_var + p + beta_squared
-
-    p_t = p + beta_squared / 2
-
-    b_x = B_x / gamma_var + gamma_var * v_x * torch.dot(v, B)
-
-    b_y = B_y / gamma_var + gamma_var * v_y * torch.dot(v, B)
-
-    b_z = B_z / gamma_var + gamma_var * v_z * torch.dot(v, B)
-
-    J_x = (
-        D_var * v_x,
-        w_t * gamma_var * v_x**2 - b_x**2 + p_t,
-        w_t * gamma_var * v_x * v_y - b_x * b_y,
-        v_y * B_x - v_x * B_y,
-        m_x,
-    )
-
-    return J_x
-
-
-def conserved_alfredo(P):
+def conserved_alfredo(P, B_x=B_x, Gamma=Gamma):
     t_P = P.t().squeeze()  # .to(device)
     rho = t_P[0]
     v_x = t_P[1]
@@ -159,7 +96,7 @@ def conserved_alfredo(P):
     return torch.stack([DD, mx, my, mz, B_y, B_z, EE]).t()
 
 
-def currents_alfredo(P):
+def currents_alfredo(P, B_x=B_x, Gamma=Gamma):
     t_P = P.t().squeeze()  # .to(device)
     rho = t_P[0]
     v_x = t_P[1]
@@ -186,7 +123,10 @@ def currents_alfredo(P):
     bz = B_z / gg + gg * v_z * vB
     pt = p + beta2 / 2
 
-    EE = DD * hh * gg - p + B2 / 2 + (v2 * B2 - vB**2) / 2
+    mx = (DD * hh * gg + B2) * v_x - vB * B_x
+
+
+    #EE = DD * hh * gg - p + B2 / 2 + (v2 * B2 - vB**2) / 2
 
     return torch.stack(
         [
