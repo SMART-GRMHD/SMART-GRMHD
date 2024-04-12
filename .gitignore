@@ -20,3 +20,6 @@ venv/
 
 # VS Code
 .vscode/
+
+# Data
+*.csv
